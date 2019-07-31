@@ -3,6 +3,7 @@ package com.example.hook.hooktest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -85,7 +86,6 @@ public class SetTextHook implements IXposedHookLoadPackage {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("Hook pay58方法后");
                 Object result = param.getResult();
                 // 获取okhttpclient
                 Class okhttp = lpparam.classLoader.loadClass("okhttp3.OkHttpClient");
@@ -127,6 +127,41 @@ public class SetTextHook implements IXposedHookLoadPackage {
                 result = buildM.invoke(buildObj);
                 param.setResult(result);
                 XposedBridge.log("Hook pay58方法后" + method.invoke(param.getResult()));
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("com.pay58.sdk.b.f", lpparam.classLoader, "a", Object.class, lpparam.classLoader.loadClass("com.pay58.sdk.b.a.b"), String.class, String.class, String.class, HashMap.class, new XC_MethodHook() {
+            /**
+             * onCreate之前回调
+             * @param param  onCreate方法的信息，可以修改
+             * @throws
+             */
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("Hook 58pay 错误返回前code:" + param.args[3]);
+                XposedBridge.log("Hook 58pay 错误返回前message:" + param.args[4]);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("com.pay58.sdk.b.f", lpparam.classLoader, "a", Object.class, lpparam.classLoader.loadClass("com.pay58.sdk.b.a.b"), String.class, Object.class,  HashMap.class, new XC_MethodHook() {
+            /**
+             * onCreate之前回调
+             * @param param  onCreate方法的信息，可以修改
+             * @throws
+             */
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("Hook 58pay 成功返回body:" + param.args[3]);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
             }
         });
     }
