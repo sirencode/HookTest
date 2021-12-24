@@ -80,8 +80,8 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
 
             hook_method("android.os.Build", lpp.classLoader, "getSerial");
             hook_method("android.net.wifi.WifiInfo", lpp.classLoader, "getMacAddress");
-            hook_method("android.net.wifi.WifiInfo", lpp.classLoader, "getSSID");
-            hook_method("android.net.wifi.WifiInfo", lpp.classLoader, "getBSSID");
+//            hook_method("android.net.wifi.WifiInfo", lpp.classLoader, "getSSID");
+//            hook_method("android.net.wifi.WifiInfo", lpp.classLoader, "getBSSID");
             hook_method("android.net.wifi.WifiManager", lpp.classLoader, "startScan");
             hook_method("android.net.wifi.WifiManager", lpp.classLoader, "getScanResults");
 
@@ -234,7 +234,7 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
                 }
             } catch (Exception e) {
             }
-            hook_method("android.net.wifi.WifiManager", lpp.classLoader, "getConnectionInfo");
+//            hook_method("android.net.wifi.WifiManager", lpp.classLoader, "getConnectionInfo");
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     XposedHelpers.findAndHookMethod("android.bluetooth.le.BluetoothLeScanner", lpp.classLoader, "startScan", ScanCallback.class,
