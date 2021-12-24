@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.hook.hooktest">
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +29,7 @@
         <!-- 2、Xposed模块的描述信息 -->
         <meta-data
             android:name="xposeddescription"
-            android:value="a sample hook"/>
+            android:value="PrivacyHook"/>
 
         <!-- 3、支持Xposed框架的最低版本 -->
         <meta-data
