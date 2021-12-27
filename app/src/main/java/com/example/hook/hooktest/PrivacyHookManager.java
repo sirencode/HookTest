@@ -67,7 +67,7 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     String id = (String) param.args[1];
-                    if (!id.equals("accessibility_captioning_locale")) {
+                    if (!id.equals("accessibility_captioning_locale") && !id.equals("enabled_accessibility_services")) {
                         Log.e(TAG, "Settings  getString:===>>>" + id);
                         Log.e(TAG, createStackToStringByIndex(new Throwable("Settings  getString:===>>>" + id)));
                     }
