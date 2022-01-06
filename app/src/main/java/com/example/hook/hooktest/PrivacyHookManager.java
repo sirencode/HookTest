@@ -2,6 +2,7 @@ package com.example.hook.hooktest;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.arch.lifecycle.Lifecycle;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanSettings;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executor;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -37,9 +39,10 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
     @SuppressLint("LongLogTag")
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpp) {
-        if (!lpp.processName.startsWith("com.tencent.qidian")) {
-            return;
-        }
+//        if (!lpp.processName.startsWith("com.tencent.qidian")) {
+//            return;
+//        }
+
         Log.d(TAG, "hookmethod processName" + lpp.processName);
         Log.d(TAG, "hookmethod packageName" + lpp.packageName);
         try {
@@ -50,6 +53,8 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
             hook_method("android.telephony.TelephonyManager", lpp.classLoader, "getImei");
             hook_method("android.telephony.TelephonyManager", lpp.classLoader, "getLine1Number");
             hook_method("android.telephony.TelephonyManager", lpp.classLoader, "getSimSerialNumber");
+            hook_method("android.telephony.CellIdentityLte", lpp.classLoader, "getCi");
+            hook_method("android.telephony.gsm.GsmCellLocation", lpp.classLoader, "getCid");
             XposedHelpers.findAndHookMethod("android.content.ContentResolver", lpp.classLoader, "query", Uri.class, String[].class, String.class, String[].class, String.class, new XC_MethodHook() {
                 @SuppressLint("LongLogTag")
                 @Override
@@ -311,8 +316,27 @@ public class PrivacyHookManager implements IXposedHookLoadPackage {
                             Log.e(TAG, createStackToStringByIndex(new Throwable("PackageManager getInstalledApplications")));
                         }
                     });
+//            SystemPropertiesHook systemPropertiesHook = new SystemPropertiesHook();
+//            XposedHelpers.findAndHookMethod("android.os.SystemProperties", lpp.classLoader, "get", String.class, String.class,systemPropertiesHook);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public class SystemPropertiesHook extends XC_MethodHook {
+        public SystemPropertiesHook() {
+            super();
+        }
+
+        @SuppressLint("LongLogTag")
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            XSharedPreferences pre = new XSharedPreferences(this.getClass().getPackage().getName(),"deviceInfo");
+            String methodName = param.method.getName();
+            if (methodName.startsWith("get")) {
+                Log.e(TAG, "SystemProperties"+ param.args[0]);
+                XposedHelpers.setStaticObjectField(android.os.Build.class,"MODEL",pre.getString("model",null));
+            }
         }
     }
 
